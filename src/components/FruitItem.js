@@ -25,11 +25,14 @@ const FruitItem = ({ item }) => {
       <View style={styles.imageContainer}>
         <Image source={item.image} style={styles.image} />
       </View>
-      <Text>{item.name}</Text>
-      <Text>{item.price}</Text>
-      <View style={[styles.buttonContainer, { alignItems: 'center' }]}>
+      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.price}>{item.price}</Text>
+      <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => {}}>
           <Text style={styles.buttonText}>Add</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => {}}>
+          <Text style={styles.buttonText}>See</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -39,45 +42,67 @@ const FruitItem = ({ item }) => {
 const styles = StyleSheet.create({
   container: {
     margin: 10,
-    padding: 10,
+    padding: 15,
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 15,
     width: 200,
-    height: 250,
+    height: 260,
     position: 'relative',
-    alignItems: 'center', // Center content horizontally
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   imageContainer: {
     width: '100%',
-    height: 100,
+    height: 120,
     alignItems: 'center',
-    marginTop: 30,
+    justifyContent: 'center',
+    marginBottom: 10,
   },
   image: {
     width: '80%',
-    height: 60,
+    height: '100%',
+    resizeMode: 'contain',
   },
   icon: {
     position: 'absolute',
     top: 10,
     right: 10,
   },
+  name: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  price: {
+    fontSize: 16,
+    color: '#888',
+    marginBottom: 15,
+  },
   buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'absolute',
-    bottom: 10,
-    left: '50%',
-    transform: [{ translateX: -50 }],
+    bottom: 15,
+    left: 0,
+    right: 0,
   },
   button: {
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    paddingVertical: 5,
+    backgroundColor: '#ff6347',
+    borderRadius: 25,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     alignItems: 'center',
+    marginHorizontal: 5,
   },
   buttonText: {
-    color: 'black',
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
