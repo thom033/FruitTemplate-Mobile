@@ -1,51 +1,125 @@
 import React, { useState } from 'react';
-import { View, ScrollView, FlatList, StyleSheet, Text } from 'react-native';
-import FruitItem from './FruitItem';
-
-const fruits = [
-    { id: '1', name: 'Orange', price: '$11', image: require('./../assets/icon.png') },
-    { id: '2', name: 'Grape', price: '$12', image: require('./../assets/icon.png') },
-    { id: '3', name: 'Banana', price: '$13', image: require('./../assets/icon.png') },
-    { id: '4', name: 'Apple', price: '$14', image: require('./../assets/icon.png') },
-    { id: '5', name: 'Mango', price: '$15', image: require('./../assets/icon.png') },
-    { id: '6', name: 'Pineapple', price: '$16', image: require('./../assets/icon.png') },
-    { id: '7', name: 'Strawberry', price: '$17', image: require('./../assets/icon.png') },
-    { id: '8', name: 'Watermelon', price: '$18', image: require('./../assets/icon.png') },
-    { id: '9', name: 'Cherry', price: '$19', image: require('./../assets/icon.png') },
-    { id: '10', name: 'Kiwi', price: '$20', image: require('./../assets/icon.png') },
-];
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const CartScreen = () => {
-  const [cartItems, setCartItems] = useState(fruits);
-  const numColumns = 2; // Define the number of columns
+  const [cartItems, setCartItems] = useState([
+    { id: '1', name: 'Orange', price: '$11', image: require('./../assets/icon.png'), quantity: 1 },
+    { id: '2', name: 'Grape', price: '$12', image: require('./../assets/icon.png'), quantity: 2 },
+    { id: '3', name: 'Orange', price: '$11', image: require('./../assets/icon.png'), quantity: 1 },
+    { id: '4', name: 'Grape', price: '$12', image: require('./../assets/icon.png'), quantity: 2 },
+    { id: '5', name: 'Orange', price: '$11', image: require('./../assets/icon.png'), quantity: 1 },
+    { id: '6', name: 'Grape', price: '$12', image: require('./../assets/icon.png'), quantity: 2 },
+    // Ajoutez d'autres fruits ici si nécessaire
+  ]);
+
+  const increaseQuantity = (id) => {
+    setCartItems(cartItems.map(item => item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
+  };
+
+  const decreaseQuantity = (id) => {
+    setCartItems(cartItems.map(item => item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item));
+  };
+
+  const removeItem = (id) => {
+    setCartItems(cartItems.filter(item => item.id !== id));
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Image source={item.image} style={styles.image} />
+      <View style={styles.detailsContainer}>
+        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.price}>{item.price}</Text>
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity onPress={() => decreaseQuantity(item.id)}>
+            <Ionicons name="remove-circle-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.quantityInput}
+            value={String(item.quantity)}
+            keyboardType="numeric"
+            onChangeText={(text) => setCartItems(cartItems.map(cartItem => cartItem.id === item.id ? { ...cartItem, quantity: parseInt(text) || 1 } : cartItem))}
+          />
+          <TouchableOpacity onPress={() => increaseQuantity(item.id)}>
+            <Ionicons name="add-circle-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <TouchableOpacity onPress={() => removeItem(item.id)}>
+        <Ionicons name="trash-outline" size={24} color="red" />
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <ScrollView horizontal>
-      <View style={styles.container}>
-        <FlatList
-          data={cartItems}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <FruitItem item={item} />}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.flatList}
-          ListEmptyComponent={<Text>No items in the cart</Text>}
-          numColumns={numColumns}
-          key={numColumns} // Add this line to force a fresh render when numColumns changes
-        />
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <Text style={styles.littleText}>My orders:</Text>
+      <FlatList
+        data={cartItems}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#f5f5f5',
+    padding: 20,
+    backgroundColor: '#f8f9fa',
+    marginBottom: 50,
   },
-  flatList: {
-    justifyContent: 'space-between',
-    paddingBottom: 100, // Adjust this value based on the height of your footer
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    marginVertical: 5,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  image: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  detailsContainer: {
+    flex: 1,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  price: {
+    fontSize: 16,
+    color: '#888',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  quantityInput: {
+    width: 40,
+    height: 30,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    textAlign: 'center',
+    marginHorizontal: 10,
+  },
+  littleText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#343a40',
+    marginBottom: 10,
+    marginTop: 20,
   },
 });
 

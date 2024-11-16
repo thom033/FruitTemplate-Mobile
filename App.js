@@ -7,6 +7,7 @@ import NotificationsScreen from './src/components/NotificationsScreen';
 import AccountScreen from './src/components/AccountScreen'; 
 import CartScreen from './src/components/CartScreen';
 import Footer from './src/components/Footer';
+import AllProductScreen from './src/components/AllProductScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const App = () => {
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="Account" component={AccountScreen} />
         <Stack.Screen name="Cart" component={CartScreen} />
+        <Stack.Screen name="AllProduct" component={AllProductScreen} />
       </Stack.Navigator>
       <Footer />
     </NavigationContainer>

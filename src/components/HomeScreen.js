@@ -40,7 +40,7 @@ const HomeScreen = () => {
         contentContainerStyle={styles.flatList}
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Cart')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AllProduct')}>
         <Text style={styles.buttonText}>Voir tout les produits</Text>
       </TouchableOpacity>
 
