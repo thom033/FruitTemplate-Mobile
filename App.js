@@ -6,10 +6,12 @@ import { View, StyleSheet } from 'react-native';
 import HomeScreen from './src/components/HomeScreen';
 import SearchScreen from './src/components/SearchScreen';
 import NotificationsScreen from './src/components/NotificationsScreen';
-import AccountScreen from './src/components/AccountScreen'; 
+import AccountScreen from './src/components/AccountScreen';
 import CartScreen from './src/components/CartScreen';
 import Footer from './src/components/Footer';
 import AllProductScreen from './src/components/AllProductScreen';
+import LoginScreen from './src/components/LoginScreen';
+import SignupScreen from './src/components/SignupScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +27,8 @@ const App = () => {
             <Stack.Screen name="Account" component={AccountScreen} />
             <Stack.Screen name="Cart" component={CartScreen} />
             <Stack.Screen name="AllProduct" component={AllProductScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
           </Stack.Navigator>
           <Footer />
         </View>

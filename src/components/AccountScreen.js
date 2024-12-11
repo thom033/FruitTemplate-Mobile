@@ -1,8 +1,10 @@
-// src/components/ProfileScreen.js
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Image
@@ -15,6 +17,9 @@ const ProfileScreen = () => {
       </Text>
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Edit Profile</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
   );
@@ -37,7 +42,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 10,
   },
   bio: {
@@ -51,6 +55,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
+    marginBottom: 10,
   },
   buttonText: {
     color: '#fff',
