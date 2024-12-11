@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { View, StyleSheet } from 'react-native';
@@ -14,19 +15,21 @@ const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <View style={styles.container}>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Search" component={SearchScreen} />
-          <Stack.Screen name="Notifications" component={NotificationsScreen} />
-          <Stack.Screen name="Account" component={AccountScreen} />
-          <Stack.Screen name="Cart" component={CartScreen} />
-          <Stack.Screen name="AllProduct" component={AllProductScreen} />
-        </Stack.Navigator>
-        <Footer />
-      </View>
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
+        <View style={styles.container}>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Search" component={SearchScreen} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            <Stack.Screen name="Account" component={AccountScreen} />
+            <Stack.Screen name="Cart" component={CartScreen} />
+            <Stack.Screen name="AllProduct" component={AllProductScreen} />
+          </Stack.Navigator>
+          <Footer />
+        </View>
+      </NavigationContainer>
+    </PaperProvider>
   );
 };
 

@@ -1,30 +1,32 @@
-// src/components/NotificationsScreen.js
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image } from 'react-native';
+import NotificationItem from './NotificationItem';
 import initialNotifications from '../assets/initialNotifications';
-
-const NotificationItem = ({ id, title, description, read, onPress }) => (
-  <TouchableOpacity onPress={() => onPress(id)} style={[styles.notificationItem, read && styles.readNotification]}>
-    <View style={styles.notificationContent}>
-      <Text style={styles.notificationTitle}>{title}</Text>
-      <Text style={styles.notificationDescription}>{description}</Text>
-    </View>
-    {!read && <View style={styles.unreadIndicator} />}
-  </TouchableOpacity>
-);
 
 const NotificationsScreen = () => {
   const [notifications, setNotifications] = useState(initialNotifications);
-
-  const markAllAsRead = () => {
-    const updatedNotifications = notifications.map(notification => ({ ...notification, read: true }));
-    setNotifications(updatedNotifications);
-  };
 
   const markAsRead = (id) => {
     const updatedNotifications = notifications.map(notification =>
       notification.id === id ? { ...notification, read: true } : notification
     );
+    setNotifications(updatedNotifications);
+  };
+
+  const markAsUnread = (id) => {
+    const updatedNotifications = notifications.map(notification =>
+      notification.id === id ? { ...notification, read: false } : notification
+    );
+    setNotifications(updatedNotifications);
+  };
+
+  const deleteNotification = (id) => {
+    const updatedNotifications = notifications.filter(notification => notification.id !== id);
+    setNotifications(updatedNotifications);
+  };
+
+  const markAllAsRead = () => {
+    const updatedNotifications = notifications.map(notification => ({ ...notification, read: true }));
     setNotifications(updatedNotifications);
   };
 
@@ -36,20 +38,30 @@ const NotificationsScreen = () => {
           <Text style={styles.markAllButtonText}>Tout marquer comme lu</Text>
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <NotificationItem
-            id={item.id}
-            title={item.title}
-            description={item.description}
-            read={item.read}
-            onPress={markAsRead}
-          />
-        )}
-        contentContainerStyle={styles.list}
-      />
+      {notifications.length === 0 ? (
+        <View style={styles.noNotificationsContainer}>
+          <Text style={styles.noNotificationsText}>No notifications</Text>
+          <Image source={require('../assets/no-notifications.gif')} style={styles.noNotificationsImage} />
+        </View>
+      ) : (
+        <FlatList
+          data={notifications}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <NotificationItem
+              id={item.id}
+              title={item.title}
+              description={item.description}
+              read={item.read}
+              onPress={markAsRead}
+              onDelete={deleteNotification}
+              onMarkAsRead={markAsRead}
+              onMarkAsUnread={markAsUnread}
+            />
+          )}
+          contentContainerStyle={styles.list}
+        />
+      )}
     </View>
   );
 };
@@ -75,42 +87,6 @@ const styles = StyleSheet.create({
   list: {
     paddingBottom: 20,
   },
-  notificationItem: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  readNotification: {
-    backgroundColor: '#e0e0e0',
-  },
-  notificationContent: {
-    flex: 1,
-  },
-  notificationTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  notificationDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 5,
-  },
-  unreadIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#007bff',
-    marginLeft: 10,
-  },
   markAllButton: {
     backgroundColor: '#007bff',
     padding: 10,
@@ -121,6 +97,22 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  noNotificationsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noNotificationsText: {
+    fontSize: 18,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  noNotificationsImage: {
+    width: 200,
+    height: 200,
+    marginTop: 20,
   },
 });
 
