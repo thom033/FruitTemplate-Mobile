@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, ScrollView, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, ScrollView, FlatList, StyleSheet, Text, useWindowDimensions } from 'react-native';
 import FruitItem from './FruitItem';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo
 
@@ -16,56 +16,49 @@ const fruits = [
     { id: '10', name: 'Kiwi', price: '$20', image: require('./../assets/icon.png') },
 ];
 
-const CartScreen = () => {
+const AllProductScreen = () => {
   const [cartItems, setCartItems] = useState(fruits);
-  const numColumns = 2; // Define the number of columns
   const scrollViewRef = useRef(null);
+  const { width } = useWindowDimensions();
+
+  // Calculate the number of columns based on screen width
+  const numColumns = Math.floor(width / 200); // Adjust 200 to the desired item width
 
   return (
-    <ScrollView horizontal ref={scrollViewRef}>
+    <ScrollView ref={scrollViewRef}>
       <View style={styles.container}>
         <Text style={styles.title}>All Product</Text>
         <FlatList
           data={cartItems}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <FruitItem item={item} />}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.flatList}
-          ListEmptyComponent={<Text>No items in the cart</Text>}
           numColumns={numColumns}
           key={numColumns} // Add this line to force a fresh render when numColumns changes
-        /> 
+          contentContainerStyle={styles.flatList}
+        />
       </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-        backgroundColor: '#f5f5f5',
-    },
-    flatList: {
-        justifyContent: 'space-between',
-        paddingBottom: 100, // Adjust this value based on the height of your footer
-    },
-    title: {
-        fontSize: 36,
-        fontWeight: 'bold',
-        color: '#343a40',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    scrollToTopButton: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
-        backgroundColor: '#343a40',
-        borderRadius: 50,
-        padding: 10,
-        marginBottom: 50,
-    },
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#343a40',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  flatList: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 100, // Adjust this value based on the height of your footer
+  },
 });
 
-export default CartScreen;
+export default AllProductScreen;

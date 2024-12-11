@@ -1,13 +1,7 @@
 // src/components/NotificationsScreen.js
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-
-const initialNotifications = [
-  { id: '1', title: 'New Message', description: 'You have received a new message from John.', read: false },
-  { id: '2', title: 'Order Shipped', description: 'Your order #1234 has been shipped.', read: false },
-  { id: '3', title: 'New Friend Request', description: 'Anna has sent you a friend request.', read: false },
-  { id: '4', title: 'Update Available', description: 'A new update is available for your app.', read: false },
-];
+import initialNotifications from '../assets/initialNotifications';
 
 const NotificationItem = ({ id, title, description, read, onPress }) => (
   <TouchableOpacity onPress={() => onPress(id)} style={[styles.notificationItem, read && styles.readNotification]}>
