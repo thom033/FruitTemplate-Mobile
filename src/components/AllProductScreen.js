@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, ScrollView, FlatList, StyleSheet, Text, useWindowDimensions } from 'react-native';
+import { View, FlatList, StyleSheet, Text, useWindowDimensions } from 'react-native';
 import FruitItem from './FruitItem';
 import { Ionicons } from '@expo/vector-icons'; // Assuming you are using Expo
 
@@ -18,34 +18,33 @@ const fruits = [
 
 const AllProductScreen = () => {
   const [cartItems, setCartItems] = useState(fruits);
-  const scrollViewRef = useRef(null);
   const { width } = useWindowDimensions();
+  const numColumns = Math.floor(width / 200);
 
-  // Calculate the number of columns based on screen width
-  const numColumns = Math.floor(width / 200); // Adjust 200 to the desired item width
+  const renderHeader = () => (
+    <Text style={styles.title}>All Product</Text>
+  );
 
   return (
-    <ScrollView ref={scrollViewRef}>
-      <View style={styles.container}>
-        <Text style={styles.title}>All Product</Text>
-        <FlatList
-          data={cartItems}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <FruitItem item={item} />}
-          numColumns={numColumns}
-          key={numColumns} // Add this line to force a fresh render when numColumns changes
-          contentContainerStyle={styles.flatList}
-        />
-      </View>
-    </ScrollView>
+    <FlatList
+      data={cartItems}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => <FruitItem item={item} />}
+      numColumns={numColumns}
+      key={numColumns}
+      ListHeaderComponent={renderHeader}
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 10,
     backgroundColor: '#f5f5f5',
+    paddingBottom: 100,
   },
   title: {
     fontSize: 36,
@@ -53,11 +52,7 @@ const styles = StyleSheet.create({
     color: '#343a40',
     textAlign: 'center',
     marginBottom: 20,
-  },
-  flatList: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 100, // Adjust this value based on the height of your footer
+    marginTop: 20,
   },
 });
 

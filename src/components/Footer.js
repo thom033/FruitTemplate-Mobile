@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text} from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
@@ -12,7 +12,7 @@ const Footer = () => {
         <Appbar.Action icon="home" onPress={() => navigation.navigate('Home')} />
         <Appbar.Action icon="magnify" onPress={() => navigation.navigate('Search')} />
         <Appbar.Action icon="bell" onPress={() => navigation.navigate('Notifications')} />
-        <Appbar.Action icon="cart" onPress={() => navigation.navigate('Cart')} /> {/* Added cart icon */}
+        <Appbar.Action icon="cart" onPress={() => navigation.navigate('Cart')} />
         <Appbar.Action icon="account" onPress={() => navigation.navigate('Account')} />
       </Appbar>
     </View>
