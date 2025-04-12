@@ -1,82 +1,74 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SIZES, SHADOWS } from '../constants/theme';
 
 const ShopDetails = ({ shop }) => {
-  if (!shop) {
-    return <Text>No shop data available</Text>;
-  }
-
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={shop.image} style={styles.image} />
-      </View>
-      <View style={styles.infoContainer}>
+    <TouchableOpacity style={styles.container}>
+      <Image source={shop.image} style={styles.image} />
+      <View style={styles.details}>
         <Text style={styles.name}>{shop.name}</Text>
-        <Text style={styles.description}>{shop.description}</Text>
-        <Text style={styles.address}>{shop.address}</Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => {}}>
-            <Text style={styles.buttonText}>Visit Shop</Text>
-          </TouchableOpacity>
+        <View style={styles.ratingContainer}>
+          <Ionicons name="star" size={16} color={COLORS.warning} />
+          <Text style={styles.rating}>{shop.rating}</Text>
+          <Text style={styles.reviews}>({shop.reviews} avis)</Text>
+        </View>
+        <View style={styles.locationContainer}>
+          <Ionicons name="location" size={16} color={COLORS.primary} />
+          <Text style={styles.location}>{shop.distance}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    margin: 10,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    width: 300,
-    height: 150,
-    alignItems: 'center',
-  },
-  imageContainer: {
-    width: '40%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 200,
+    marginRight: SIZES.base * 2,
+    backgroundColor: COLORS.white,
+    borderRadius: 15,
+    overflow: 'hidden',
+    ...SHADOWS.light,
   },
   image: {
     width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
+    height: 120,
+    resizeMode: 'cover',
   },
-  infoContainer: {
-    width: '60%',
-    paddingLeft: 10,
+  details: {
+    padding: SIZES.base * 2,
   },
   name: {
-    fontSize: 20,
+    fontSize: SIZES.medium,
     fontWeight: 'bold',
+    color: COLORS.text,
+    marginBottom: SIZES.base,
   },
-  description: {
-    fontSize: 16,
-    marginTop: 5,
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SIZES.base,
   },
-  address: {
-    fontSize: 14,
-    marginTop: 5,
-    color: 'gray',
+  rating: {
+    fontSize: SIZES.font,
+    color: COLORS.text,
+    marginLeft: SIZES.base / 2,
+    marginRight: SIZES.base,
   },
-  buttonContainer: {
-    marginTop: 10,
+  reviews: {
+    fontSize: SIZES.font,
+    color: COLORS.textLight,
   },
-  button: {
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 5,
-    paddingVertical: 5,
-    paddingHorizontal: 20,
+  locationContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  buttonText: {
-    color: 'black',
+  location: {
+    fontSize: SIZES.font,
+    color: COLORS.textLight,
+    marginLeft: SIZES.base / 2,
   },
 });
 

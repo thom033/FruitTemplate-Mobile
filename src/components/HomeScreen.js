@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, FlatList, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FruitItem from './FruitItem';
 import ShopDetails from './ShopDetails';
@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
     padding: 20,
     paddingBottom: 80,
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
   },
   title: {
     fontSize: 36,

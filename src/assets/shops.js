@@ -1,9 +1,32 @@
-const shops = [
-    { id: '1', name: 'Shop 1', description: 'Shop 1 description', address: 'Shop 1 address', image: require('./../assets/icon.png') },
-    { id: '2', name: 'Shop 2', description: 'Shop 2 description', address: 'Shop 2 address', image: require('./../assets/icon.png') },
-    { id: '3', name: 'Shop 3', description: 'Shop 3 description', address: 'Shop 3 address', image: require('./../assets/icon.png') },
-    { id: '4', name: 'Shop 4', description: 'Shop 4 description', address: 'Shop 4 address', image: require('./../assets/icon.png') },
-    { id: '5', name: 'Shop 5', description: 'Shop 5 description', address: 'Shop 5 address', image: require('./../assets/icon.png') },
-  ];
-
-export default shops;
+export default [
+  {
+    id: '1',
+    name: 'Fruit Paradise',
+    image: require('../assets/images/shop1.jpg'),
+    rating: 4.8,
+    reviews: 256,
+    distance: '0.5 km',
+    description: 'Magasin de fruits frais et bio',
+    address: '123 Rue des Fruits, Paris',
+  },
+  {
+    id: '2',
+    name: 'Fresh Market',
+    image: require('../assets/images/shop2.jpg'),
+    rating: 4.6,
+    reviews: 189,
+    distance: '1.2 km',
+    description: 'Marché de produits frais',
+    address: '456 Avenue des Vergers, Paris',
+  },
+  {
+    id: '3',
+    name: 'Bio Corner',
+    image: require('../assets/images/shop3.jpg'),
+    rating: 4.9,
+    reviews: 312,
+    distance: '0.8 km',
+    description: 'Boutique bio et locale',
+    address: '789 Boulevard Bio, Paris',
+  },
+];

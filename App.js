@@ -1,47 +1,73 @@
-import * as React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { View, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { AppProvider } from './src/context/AppContext';
+import { COLORS } from './src/constants/theme';
+
+// Import des écrans
 import HomeScreen from './src/components/HomeScreen';
 import SearchScreen from './src/components/SearchScreen';
+import CartScreen from './src/components/CartScreen';
 import NotificationsScreen from './src/components/NotificationsScreen';
 import AccountScreen from './src/components/AccountScreen';
-import CartScreen from './src/components/CartScreen';
-import Footer from './src/components/Footer';
 import AllProductScreen from './src/components/AllProductScreen';
-import LoginScreen from './src/components/LoginScreen';
-import SignupScreen from './src/components/SignupScreen';
 
+const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const App = () => {
+const HomeStack = () => {
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <View style={styles.container}>
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Search" component={SearchScreen} />
-            <Stack.Screen name="Notifications" component={NotificationsScreen} />
-            <Stack.Screen name="Account" component={AccountScreen} />
-            <Stack.Screen name="Cart" component={CartScreen} />
-            <Stack.Screen name="AllProduct" component={AllProductScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
-          </Stack.Navigator>
-          <Footer />
-        </View>
-      </NavigationContainer>
-    </PaperProvider>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="AllProduct" component={AllProductScreen} />
+    </Stack.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    overflow: 'scroll',
-  },
-});
+export default function App() {
+  return (
+    <AppProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
 
-export default App;
+              if (route.name === 'Accueil') {
+                iconName = focused ? 'home' : 'home-outline';
+              } else if (route.name === 'Recherche') {
+                iconName = focused ? 'search' : 'search-outline';
+              } else if (route.name === 'Panier') {
+                iconName = focused ? 'cart' : 'cart-outline';
+              } else if (route.name === 'Notifications') {
+                iconName = focused ? 'notifications' : 'notifications-outline';
+              } else if (route.name === 'Compte') {
+                iconName = focused ? 'person' : 'person-outline';
+              }
+
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: COLORS.primary,
+            tabBarInactiveTintColor: COLORS.textLight,
+            tabBarStyle: {
+              backgroundColor: COLORS.white,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              height: 60,
+              paddingBottom: 10,
+            },
+            headerShown: false,
+          })}
+        >
+          <Tab.Screen name="Accueil" component={HomeStack} />
+          <Tab.Screen name="Recherche" component={SearchScreen} />
+          <Tab.Screen name="Panier" component={CartScreen} />
+          <Tab.Screen name="Notifications" component={NotificationsScreen} />
+          <Tab.Screen name="Compte" component={AccountScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </AppProvider>
+  );
+}

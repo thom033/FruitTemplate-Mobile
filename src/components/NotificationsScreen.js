@@ -1,67 +1,215 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Image } from 'react-native';
-import NotificationItem from './NotificationItem';
-import initialNotifications from '../assets/initialNotifications';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Animated, Alert, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
+const notifications = [
+  {
+    id: '1',
+    type: 'order',
+    title: 'Commande confirmée',
+    message: 'Votre commande de fruits a été confirmée et sera livrée demain.',
+    time: 'Il y a 5 minutes',
+    read: false,
+    icon: 'cart',
+    color: '#4ECDC4',
+    timestamp: new Date().getTime() - 5 * 60 * 1000 // 5 minutes ago
+  },
+  {
+    id: '2',
+    type: 'promotion',
+    title: 'Promotion spéciale',
+    message: 'Profitez de 20% de réduction sur tous les fruits exotiques ce weekend !',
+    time: 'Il y a 1 heure',
+    read: false,
+    icon: 'pricetag',
+    color: '#FF6B6B',
+    timestamp: new Date().getTime() - 60 * 60 * 1000 // 1 hour ago
+  },
+  {
+    id: '3',
+    type: 'delivery',
+    title: 'Livraison en cours',
+    message: 'Votre livreur est en route avec votre commande.',
+    time: 'Il y a 2 heures',
+    read: true,
+    icon: 'bicycle',
+    color: '#FFD166',
+    timestamp: new Date().getTime() - 2 * 60 * 60 * 1000 // 2 hours ago
+  },
+  {
+    id: '4',
+    type: 'system',
+    title: 'Mise à jour de l\'application',
+    message: 'De nouvelles fonctionnalités sont disponibles dans votre application.',
+    time: 'Il y a 1 jour',
+    read: true,
+    icon: 'refresh',
+    color: '#6A0572',
+    timestamp: new Date().getTime() - 24 * 60 * 60 * 1000 // 1 day ago
+  },
+];
 
 const NotificationsScreen = () => {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const [notificationsList, setNotificationsList] = useState(notifications);
+  const [sortBy, setSortBy] = useState('date'); // 'date' or 'type'
+  const [showSortOptions, setShowSortOptions] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const markAsRead = (id) => {
-    const updatedNotifications = notifications.map(notification =>
-      notification.id === id ? { ...notification, read: true } : notification
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0.5,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    setNotificationsList(prevNotifications =>
+      prevNotifications.map(notification =>
+        notification.id === id ? { ...notification, read: true } : notification
+      )
     );
-    setNotifications(updatedNotifications);
   };
 
   const markAsUnread = (id) => {
-    const updatedNotifications = notifications.map(notification =>
-      notification.id === id ? { ...notification, read: false } : notification
+    setNotificationsList(prevNotifications =>
+      prevNotifications.map(notification =>
+        notification.id === id ? { ...notification, read: false } : notification
+      )
     );
-    setNotifications(updatedNotifications);
   };
 
   const deleteNotification = (id) => {
-    const updatedNotifications = notifications.filter(notification => notification.id !== id);
-    setNotifications(updatedNotifications);
+    Alert.alert(
+      'Supprimer la notification',
+      'Êtes-vous sûr de vouloir supprimer cette notification ?',
+      [
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+        {
+          text: 'Supprimer',
+          onPress: () => {
+            setNotificationsList(prevNotifications =>
+              prevNotifications.filter(notification => notification.id !== id)
+            );
+          },
+        },
+      ]
+    );
   };
 
   const markAllAsRead = () => {
-    const updatedNotifications = notifications.map(notification => ({ ...notification, read: true }));
-    setNotifications(updatedNotifications);
+    setNotificationsList(prevNotifications =>
+      prevNotifications.map(notification => ({ ...notification, read: true }))
+    );
   };
+
+  const sortNotifications = (notifications) => {
+    return [...notifications].sort((a, b) => {
+      if (sortBy === 'date') {
+        return b.timestamp - a.timestamp;
+      } else {
+        return a.type.localeCompare(b.type);
+      }
+    });
+  };
+
+  const renderNotificationItem = ({ item }) => (
+    <Animated.View style={{ opacity: fadeAnim }}>
+      <TouchableOpacity
+        style={[
+          styles.notificationItem,
+          !item.read && styles.unreadNotification
+        ]}
+        onPress={() => markAsRead(item.id)}
+      >
+        <View style={[styles.iconContainer, { backgroundColor: `${item.color}20` }]}>
+          <Ionicons name={item.icon} size={24} color={item.color} />
+        </View>
+        <View style={styles.notificationContent}>
+          <View style={styles.notificationHeader}>
+            <Text style={styles.notificationTitle}>{item.title}</Text>
+            <View style={styles.notificationActions}>
+              {!item.read && <View style={styles.unreadBadge} />}
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={() => markAsUnread(item.id)}
+              >
+                <Ionicons name="refresh" size={16} color="#7f8c8d" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={() => deleteNotification(item.id)}
+              >
+                <Ionicons name="trash" size={16} color="#FF6B6B" />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Text style={styles.notificationMessage}>{item.message}</Text>
+          <Text style={styles.notificationTime}>{item.time}</Text>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
+  );
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>Notifications</Text>
-        <TouchableOpacity style={styles.markAllButton} onPress={markAllAsRead}>
-          <Text style={styles.markAllButtonText}>Tout marquer comme lu</Text>
-        </TouchableOpacity>
-      </View>
-      {notifications.length === 0 ? (
-        <View style={styles.noNotificationsContainer}>
-          <Text style={styles.noNotificationsText}>No notifications</Text>
-          <Image source={require('../assets/no-notifications.gif')} style={styles.noNotificationsImage} />
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Notifications</Text>
+        <View style={styles.headerActions}>
+          <TouchableOpacity 
+            style={styles.sortButton}
+            onPress={() => setShowSortOptions(!showSortOptions)}
+          >
+            <Ionicons name="options" size={24} color="#7f8c8d" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.clearButton} onPress={markAllAsRead}>
+            <Text style={styles.clearButtonText}>Tout marquer comme lu</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <FlatList
-          data={notifications}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <NotificationItem
-              id={item.id}
-              title={item.title}
-              description={item.description}
-              read={item.read}
-              onPress={markAsRead}
-              onDelete={deleteNotification}
-              onMarkAsRead={markAsRead}
-              onMarkAsUnread={markAsUnread}
-            />
-          )}
-          contentContainerStyle={styles.list}
-        />
+      </View>
+
+      {showSortOptions && (
+        <View style={styles.sortOptions}>
+          <TouchableOpacity 
+            style={[styles.sortOption, sortBy === 'date' && styles.selectedSortOption]}
+            onPress={() => {
+              setSortBy('date');
+              setShowSortOptions(false);
+            }}
+          >
+            <Text style={[styles.sortOptionText, sortBy === 'date' && styles.selectedSortOptionText]}>
+              Trier par date
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.sortOption, sortBy === 'type' && styles.selectedSortOption]}
+            onPress={() => {
+              setSortBy('type');
+              setShowSortOptions(false);
+            }}
+          >
+            <Text style={[styles.sortOptionText, sortBy === 'type' && styles.selectedSortOptionText]}>
+              Trier par type
+            </Text>
+          </TouchableOpacity>
+        </View>
       )}
+
+      <FlatList
+        data={sortNotifications(notificationsList)}
+        renderItem={renderNotificationItem}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.notificationsList}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -69,50 +217,149 @@ const NotificationsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-    position: 'relative',
+    backgroundColor: '#f8f9fa',
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
   },
-  headerContainer: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    padding: 20,
+    backgroundColor: '#fff',
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  header: {
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#2c3e50',
   },
-  list: {
-    paddingBottom: 20,
+  sortButton: {
+    padding: 8,
+    borderRadius: 15,
+    backgroundColor: '#f1f2f6',
+    marginRight: 10,
   },
-  markAllButton: {
-    backgroundColor: '#007bff',
+  clearButton: {
+    padding: 8,
+    borderRadius: 15,
+    backgroundColor: '#f1f2f6',
+  },
+  clearButtonText: {
+    color: '#7f8c8d',
+    fontSize: 14,
+  },
+  sortOptions: {
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    margin: 15,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  sortOption: {
     padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
+    borderRadius: 10,
+    marginBottom: 5,
   },
-  markAllButtonText: {
-    color: '#fff',
-    fontSize: 12,
+  selectedSortOption: {
+    backgroundColor: '#FF6B6B20',
+  },
+  sortOptionText: {
+    fontSize: 16,
+    color: '#7f8c8d',
+  },
+  selectedSortOptionText: {
+    color: '#FF6B6B',
     fontWeight: 'bold',
   },
-  noNotificationsContainer: {
-    flex: 1,
+  notificationsList: {
+    padding: 15,
+    paddingBottom: 100,
+  },
+  notificationItem: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  unreadNotification: {
+    backgroundColor: '#f8f9fa',
+    borderLeftWidth: 3,
+    borderLeftColor: '#FF6B6B',
+  },
+  iconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 15,
   },
-  noNotificationsText: {
-    fontSize: 18,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 20,
+  notificationContent: {
+    flex: 1,
   },
-  noNotificationsImage: {
-    width: 200,
-    height: 200,
-    marginTop: 20,
+  notificationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  notificationActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    padding: 5,
+    marginLeft: 10,
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+  },
+  unreadBadge: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF6B6B',
+    marginRight: 5,
+  },
+  notificationMessage: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    marginBottom: 5,
+  },
+  notificationTime: {
+    fontSize: 12,
+    color: '#bdc3c7',
   },
 });
 

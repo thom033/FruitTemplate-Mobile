@@ -1,107 +1,59 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Assurez-vous d'avoir installé @expo/vector-icons
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useApp } from '../context/AppContext';
+import { COLORS, SIZES, SHADOWS } from '../constants/theme';
 
 const FruitItem = ({ item }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  if (!item) {
-    return <Text>No item data available</Text>;
-  }
-
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
+  const { addToCart } = useApp();
 
   return (
-    <View style={styles.container}>
-      <Ionicons
-        name={isFavorite ? "heart" : "heart-outline"}
-        size={24}
-        color="red"
-        style={styles.icon}
-        onPress={toggleFavorite}
-      />
-      <View style={styles.imageContainer}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => addToCart(item)}
+    >
+      <View style={[styles.imageContainer, { backgroundColor: `${item.color}20` }]}>
         <Image source={item.image} style={styles.image} />
       </View>
       <Text style={styles.name}>{item.name}</Text>
       <Text style={styles.price}>{item.price}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText}>Add</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <Text style={styles.buttonText}>See</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
-    padding: 15,
-    backgroundColor: '#fff',
+    width: 150,
+    marginRight: SIZES.base * 2,
+    backgroundColor: COLORS.white,
     borderRadius: 15,
-    width: 200,
-    height: 260,
-    position: 'relative',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    padding: SIZES.base * 2,
+    ...SHADOWS.light,
   },
   imageContainer: {
-    width: '100%',
-    height: 120,
-    alignItems: 'center',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     justifyContent: 'center',
-    marginBottom: 10,
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: SIZES.base,
   },
   image: {
-    width: '80%',
-    height: '100%',
+    width: 60,
+    height: 60,
     resizeMode: 'contain',
   },
-  icon: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-  },
   name: {
-    fontSize: 18,
+    fontSize: SIZES.medium,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: SIZES.base,
   },
   price: {
-    fontSize: 16,
-    color: '#888',
-    marginBottom: 15,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 15,
-    left: 0,
-    right: 0,
-  },
-  button: {
-    backgroundColor: '#ff6347',
-    borderRadius: 25,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  buttonText: {
-    color: '#fff',
+    fontSize: SIZES.font,
+    color: COLORS.primary,
+    textAlign: 'center',
     fontWeight: 'bold',
   },
 });
